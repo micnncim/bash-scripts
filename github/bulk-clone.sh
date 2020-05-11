@@ -65,3 +65,5 @@ while [[ SECONDS -lt 300 ]]; do # timeout after 5m
 
   page=$((page + 1))
 done
+
+echo "[ERROR] execution timeout"
