@@ -17,7 +17,7 @@ usage() {
 EOF
 }
 
-github_api="https://api.github.com"
+GITHUB_API="https://api.github.com"
 
 cmd='ghq get'
 
@@ -47,11 +47,11 @@ if [[ -z "${owner}" ]]; then
   exit 1
 fi
 
+SECONDS=0
 page=1
 
-SECONDS=0
 while [[ SECONDS -lt 300 ]]; do # timeout after 5m
-  resp=$(curl -sL "${github_api}/users/${owner}/repos?type=sources&page=${page}")
+  resp=$(curl -sL "${GITHUB_API}/users/${owner}/repos?type=sources&page=${page}")
 
   if [[ $(echo "${resp}" | jq '. | length') -eq 0 ]]; then
     exit 0
