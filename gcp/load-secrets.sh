@@ -8,13 +8,11 @@ set -e
 secret_prefix="secret://"
 
 for v in $(printenv | grep ${secret_prefix}); do
-  echo "${v}"
-
   key=${v%"="*}   # e.g.) my-secret
   value=${v#*"="} # e.g.) secret://projects/my-project/secrets/my-secret/versions/123
 
   if echo "${value}" | grep -qv "^${secret_prefix}"; then
-    continue # Skip the values that don't have secret prefix.
+    continue # Skip the values that don't have the secret prefix.
   fi
 
   value=${value#"$secret_prefix"*} # Trim secret prefix. e.g.) projects/my-project/secrets/my-secret/versions/123
