@@ -3,7 +3,7 @@
 set -e
 
 # Secret names should be of the format:
-#    my-secret=secret://projects/my-project/secrets/my-secret/versions/123
+#    secret://projects/my-project/secrets/my-secret/versions/123
 
 secret_prefix="secret://"
 
