@@ -1,5 +1,12 @@
 #!/bin/bash
 
+set -o errexit
+set -o pipefail
+
+project_root_dir="$(git rev-parse --show-toplevel)"
+# shellcheck source=../lib/lib.sh
+source "${project_root_dir}/lib/lib.sh"
+
 export GITHUB_TOKEN='' # Override GitHub user
 
 readonly git_username=''
@@ -7,18 +14,7 @@ readonly git_email=''
 
 readonly branch=''
 
-function ask() {
-  while true; do
-    read -r -p "Continue [Y/n]? " answer
-    case $answer in
-      [Y]*) return 0 ;;
-      [n]*) exit 0 ;;
-      *) echo "Please answer [Y/n]." ;;
-    esac
-  done
-}
-
-function fetch_github_actor() {
+fetch_github_actor() {
   gh api graphql -f query='
 query {
    viewer {
@@ -27,13 +23,12 @@ query {
 }' | jq -r '.data.viewer.login'
 }
 
-function main() {
+main() {
   echo "Author of PR: $(fetch_github_actor)"
-  ask
-
-  git pull origin master
+  util::ask 'Continue?'
 
   git switch master
+  git pull origin master
 
   git switch -c "${branch}"
   git add .
@@ -47,4 +42,4 @@ function main() {
     --milestone ''
 }
 
-main
+main "$@"
