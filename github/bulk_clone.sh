@@ -1,26 +1,13 @@
 #!/bin/bash
 
-readonly ESC=$(printf '\033')
-readonly RED="${ESC}[31m"
-readonly BLUE="${ESC}[34m"
-readonly NO_COLOR="${ESC}[m"
+set -o errexit
+set -o pipefail
+
+project_root_dir="$(git rev-parse --show-toplevel)"
+# shellcheck source=../lib/lib.sh
+source "${project_root_dir}/lib/lib.sh"
 
 readonly GITHUB_API="https://api.github.com"
-
-owner=$1
-if [[ -z "${owner}" ]]; then
-  error "missing argument: owner"
-  usage
-  exit 1
-fi
-
-info() {
-  echo "${BLUE}$(date +'%Y-%m-%dT%H:%M:%S%z')  INFO $*${NO_COLOR}" >&2
-}
-
-error() {
-  echo "${RED}$(date +'%Y-%m-%dT%H:%M:%S%z') ERROR $*${NO_COLOR}" >&2
-}
 
 usage() {
   cat <<EOF
@@ -42,13 +29,13 @@ EOF
 check_executables() {
   # Confirm whether git is installed or not
   if ! type git &>/dev/null; then
-    error "git is not installed"
+    log::error "git is not installed"
     exit 1
   fi
 
   # Confirm whether jq is installed or not
   if ! type jq &>/dev/null; then
-    error "jq is not installed"
+    log::error "jq is not installed"
     exit 1
   fi
 }
@@ -67,7 +54,7 @@ clone_repos() {
     urls=$(echo "${resp}" | jq -r '.[].html_url')
 
     for url in $urls; do
-      info "Cloning ${url#'https://github.com/'}..."
+      log::info "Cloning ${url#'https://github.com/'}..."
 
       if type ghq &>/dev/null; then
         ghq get "${url}"
@@ -79,10 +66,18 @@ clone_repos() {
     page=$((page + 1))
   done
 
-  error "execution timeout"
+  log::error "execution timeout"
 }
 
 main() {
+  owner=$1
+  if [[ -z "${owner}" ]]; then
+    log::error "missing argument: owner"
+    usage
+    exit 1
+  fi
+
+  util::ask "Trying to clone ${owner}'s all the repostories. Proceed?" || exit 0
   check_executables
   clone_repos
 }
