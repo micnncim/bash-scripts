@@ -8,9 +8,6 @@ readonly NO_COLOR="${ESC}[m"
 
 #######################################
 # Output colorized log at info level.
-# Globals:
-#   BLUE
-#   NO_COLOR
 # Arguments:
 #   $1: Message to log
 # Outputs:
@@ -22,9 +19,6 @@ log::info() {
 
 #######################################
 # Output colorized log at error level.
-# Globals:
-#   RED
-#   NO_COLOR
 # Arguments:
 #   $1: Message to log
 # Outputs:
@@ -36,9 +30,6 @@ log::error() {
 
 #######################################
 # Output colorized log at warning level.
-# Globals:
-#   YELLOW
-#   NO_COLOR
 # Arguments:
 #   $1: Message to log
 # Outputs:
@@ -50,10 +41,6 @@ log::warn() {
 
 #######################################
 # Ask yes or no as interactive prompt.
-# Globals:
-#   BLUE
-#   YELLOW
-#   NO_COLOR
 # Arguments:
 #   $1: Inquiry message
 # Outputs:
@@ -73,4 +60,20 @@ util::ask() {
       *) echo "${YELLOW}Please answer [Y/n].${NO_COLOR}" ;;
     esac
   done
+}
+
+#######################################
+# Check existence of an executable.
+# Arguments:
+#   $1: Executable
+# Outputs:
+#   Show error message if the given executable doesn't exist
+# Returns:
+#   1 if the given executable doesn't exist, otherwise 0.
+#######################################
+util::check_executable() {
+  if ! type "${1}" &>/dev/null; then
+    log::error "${1} not found"
+    return 1
+  fi
 }
