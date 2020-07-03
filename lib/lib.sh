@@ -4,6 +4,7 @@ readonly ESC=$(printf '\033')
 readonly RED="${ESC}[31m"
 readonly YELLOW="${ESC}[33m"
 readonly BLUE="${ESC}[34m"
+readonly CYAN="${ESC}[36m"
 readonly NO_COLOR="${ESC}[m"
 
 #######################################
@@ -37,6 +38,22 @@ log::error() {
 #######################################
 log::warn() {
   echo "${YELLOW}$(date +'%Y-%m-%dT%H:%M:%S%z')  WARN $*${NO_COLOR}" >&2
+}
+
+#######################################
+# Output colorized log at debug level.
+# Globals:
+#   DEBUG
+# Arguments:
+#   $1: Message to log
+# Outputs:
+#   Output message to stderr if DEBUG == 'true'
+#######################################
+log::debug() {
+  if [[ $DEBUG == 'true' ]]; then
+    return 0
+  fi
+  echo "${CYAN}$(date +'%Y-%m-%dT%H:%M:%S%z') DEBUG $*${NO_COLOR}" >&2
 }
 
 #######################################
