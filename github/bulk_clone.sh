@@ -33,7 +33,9 @@ check_executables() {
 }
 
 clone_repos() {
-  for url in $(gh api --paginate 'users/:owner/repos?sort=updated&direction=desc' | jq -r '.[].html_url'); do
+  owner=$1
+
+  for url in $(gh api --paginate "users/${owner}/repos?sort=updated&direction=desc" | jq -r '.[].html_url'); do
     log::info "Cloning ${url#'https://github.com/'}..."
 
     if type ghq &>/dev/null; then
@@ -56,7 +58,7 @@ main() {
 
   util::ask "Trying to clone ${owner}'s all the repostories. Proceed?" || exit 0
 
-  clone_repos
+  clone_repos "${owner}"
 }
 
 main "$@"
