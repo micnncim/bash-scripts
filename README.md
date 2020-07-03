@@ -4,7 +4,7 @@ A collection of miscellaneous Bash scripts.
 
 ## Requirement
 
-- Bash 4+
+- Bash 3+
 
 ## Usage
 
