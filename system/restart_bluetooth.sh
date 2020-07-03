@@ -18,7 +18,8 @@ check_executables() {
 }
 
 restart_bluetooth() {
-  mapfile -t addresses < <(blueutil --paired --format json | jq -r '.[] | select((.name != null) and (.connected == true))| .address')
+  addresses=()
+  while IFS='' read -r line; do addresses+=("$line"); done < <(blueutil --paired --format json | jq -r '.[] | select((.name != null) and (.connected == true))| .address')
 
   log::info 'Restarting bluetooth service...'
   blueutil -p 0 && sleep 1 && blueutil -p 1
