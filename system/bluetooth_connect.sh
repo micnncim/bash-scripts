@@ -11,7 +11,7 @@ project_root_dir="$(git rev-parse --show-toplevel)"
 source "${project_root_dir}/lib/lib.sh"
 
 check_executables() {
-  tools=(jq blueutil fzf)
+  declare -r tools=(jq blueutil fzf)
   for tool in "${tools[@]}"; do
     util::check_executable "${tool}"
   done
@@ -24,7 +24,7 @@ select_device() {
 connect_device() {
   local name="${1}"
 
-  readonly address=$(blueutil --recent --format json | jq -r ".[] | select(.name == \"$name\") | .address")
+  local -r address=$(blueutil --recent --format json | jq -r ".[] | select(.name == \"$name\") | .address")
 
   # https://unix.stackexchange.com/questions/102008/how-do-i-trim-leading-and-trailing-whitespace-from-each-line-of-some-output
   name=$(echo "${name}" | awk '{$1=$1};1')
