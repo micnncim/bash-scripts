@@ -11,14 +11,14 @@ project_root_dir="$(git rev-parse --show-toplevel)"
 source "${project_root_dir}/lib/lib.sh"
 
 check_executables() {
-  tools=(jq blueutil)
+  declare -r tools=(jq blueutil)
   for tool in "${tools[@]}"; do
     util::check_executable "${tool}"
   done
 }
 
 restart_bluetooth() {
-  addresses=()
+  declare -a addresses
   while IFS='' read -r line; do addresses+=("$line"); done < <(blueutil --paired --format json | jq -r '.[] | select((.name != null) and (.connected == true))| .address')
 
   log::info 'Restarting bluetooth service...'
@@ -30,10 +30,11 @@ restart_bluetooth() {
   for address in "${addresses[@]}"; do
     # Trim leading and trailing spaces at the end
     # https://unix.stackexchange.com/questions/102008/how-do-i-trim-leading-and-trailing-whitespace-from-each-line-of-some-output
+    local name
     name=$(blueutil --info "${address}" --format json | jq -r '.name' | awk '{$1=$1};1')
 
     # Retry at most 5 times
-    n=0
+    local n=0
     until [[ "$n" -ge 5 ]]; do
       log::info "Trying to connect to ${name}..."
 
@@ -54,4 +55,4 @@ main() {
   restart_bluetooth
 }
 
-main
+main "$@"
