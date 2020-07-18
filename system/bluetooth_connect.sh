@@ -53,7 +53,8 @@ connect_device() {
 
 main() {
   check_executables
-  connect_device "$(select_device)"
+  device=$(select_device)
+  connect_device "${device}"
 }
 
 main "$@"
