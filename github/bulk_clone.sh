@@ -26,14 +26,14 @@ EOF
 }
 
 check_executables() {
-  tools=(git jq)
+  local -r tools=(git jq)
   for tool in "${tools[@]}"; do
     util::check_executable "${tool}"
   done
 }
 
 clone_repos() {
-  owner=$1
+  local -r owner="$1"
 
   for url in $(gh api --paginate "users/${owner}/repos?sort=updated&direction=desc" | jq -r '.[].html_url'); do
     log::info "Cloning ${url#'https://github.com/'}..."
@@ -47,7 +47,7 @@ clone_repos() {
 }
 
 main() {
-  owner=$1
+  local -r owner="$1"
   if [[ -z "${owner}" ]]; then
     log::error "missing argument: owner"
     usage
