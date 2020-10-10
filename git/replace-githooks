@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -eu
+set -o pipefail
+
+replace_githooks() {
+  if [ -e .git/hooks ]; then
+    rm -rf .git/hooks
+    ln -s "${XDG_CONFIG_HOME}/git/hooks" .git/hooks
+  fi
+}
+
+for repo in $(ghq list); do
+  pushd "${HOME}/src/${repo}" >/dev/null || exit
+  replace_githooks
+  echo "git hooks have been replaced: ${repo}"
+  popd >/dev/null || exit
+done
